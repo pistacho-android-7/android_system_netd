@@ -84,20 +84,26 @@ int SoftapController::startSoftap() {
         property_get(DRIVER_VENDOR_NAME, driver_vendor, NULL);
         int ret = 0;
         if ((strcmp(driver_vendor, "realtek") == 0)) {
-           ret = execl(HOSTAPD_BIN_FILE_RTL, HOSTAPD_BIN_FILE,
-                       "-e", WIFI_ENTROPY_FILE,
-                       HOSTAPD_CONF_FILE, (char *) NULL);
+            ALOGI("vendor: %s", driver_vendor);
+            ret = execl(HOSTAPD_BIN_FILE_RTL, HOSTAPD_BIN_FILE,
+                        "-e", WIFI_ENTROPY_FILE,
+                        HOSTAPD_CONF_FILE, (char *) NULL);
         } else if ((strcmp(driver_vendor, "atheros") == 0)) {
-           ret = execl(HOSTAPD_BIN_FILE, HOSTAPD_BIN_FILE,
-                       "-e", WIFI_ENTROPY_FILE,
-                       HOSTAPD_CONF_FILE, (char *) NULL);
+            ALOGI("vendor: %s", driver_vendor);
+            ret = execl(HOSTAPD_BIN_FILE, HOSTAPD_BIN_FILE,
+                        "-e", WIFI_ENTROPY_FILE,
+                        HOSTAPD_CONF_FILE, (char *) NULL);
         } else if ((strcmp(driver_vendor, "broadcom") == 0)) {
-           ret = execl(HOSTAPD_BIN_FILE_BCM, HOSTAPD_BIN_FILE,
-                       "-e", WIFI_ENTROPY_FILE,
-                       HOSTAPD_CONF_FILE, (char *) NULL);
-
-        } else
-            ALOGE("no specific driver vendor");
+            ALOGI("vendor: %s", driver_vendor);
+            ret = execl(HOSTAPD_BIN_FILE_BCM, HOSTAPD_BIN_FILE,
+                        "-e", WIFI_ENTROPY_FILE,
+                        HOSTAPD_CONF_FILE, (char *) NULL);
+        } else {
+            ALOGI("using generic hostapd");
+            ret = execl(HOSTAPD_BIN_FILE, HOSTAPD_BIN_FILE,
+                        "-e", WIFI_ENTROPY_FILE,
+                        HOSTAPD_CONF_FILE, (char *) NULL);
+        }
         ALOGE("execl failed (%s)", strerror(errno));
         ALOGE("SoftAP failed to start");
         return ResponseCode::ServiceStartFailed;
